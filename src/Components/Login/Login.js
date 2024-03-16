@@ -1,93 +1,93 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Login.css';
+import React, { useState, useEffect } from 'react';
+//Apply css according to your design theme or css that has been given to you in week 2 lab 2
+
+import { Link, useNavigate } from 'react-router-dom';
+import { API_URL } from '../../config';
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
+
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (sessionStorage.getItem("auth-token")) {
+      navigate("/")
+    }
+  }, []);
+
+  const login = async (e) => {
+    e.preventDefault();
+    const res = await fetch(`${API_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // name: name,
+        email:email,
+        password: password,
+      }),
     });
 
-    const [errors, setErrors] = useState({});
+    const json = await res.json();
+    if (json.authtoken) {
+      sessionStorage.setItem('auth-token', json.authtoken);
+  
+      sessionStorage.setItem('email', email);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const validationErrors = {};
-
-        // Email validation (required)
-        if (!formData.email.trim()) {
-            validationErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            validationErrors.email = 'Invalid email address';
+      navigate('/');
+      window.location.reload()
+    } else {
+      if (json.errors) {
+        for (const error of json.errors) {
+          alert(error.msg);
         }
+      } else {
+        alert(json.error);
+      }
+    }
+  };
 
-        // Password validation (required)
-        if (!formData.password.trim()) {
-            validationErrors.password = 'Password is required';
-        }
-
-        if (Object.keys(validationErrors).length === 0) {
-            // Form is valid, submit data or perform further actions
-            console.log('Form submitted:', formData);
-        } else {
-            // Set validation errors
-            setErrors(validationErrors);
-        }
-    };
-
-    return (
-        <div className="container">
-            <div className="login-grid">
-                <div className="login-text">
-                    <h2>Login</h2>
-                </div>
-                <div className="login-text">
-                    Are you a new member? <span><Link to="/signup" style={{ color: '#2190FF' }}> Sign Up Here</Link></span>
-                </div>
-                <br />
-                <div className="login-form">
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="form-control"
-                                placeholder="Enter your email"
-                                aria-describedby="helpId"
-                            />
-                            {errors.email && <span className="error">{errors.email}</span>}
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                id="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className="form-control"
-                                placeholder="Enter your password"
-                                aria-describedby="helpId"
-                            />
-                            {errors.password && <span className="error">{errors.password}</span>}
-                        </div>
-                        <div className="btn-group">
-                            <button type="submit" className="btn btn-primary mb-2 mr-1 waves-effect waves-light">Login</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+  return (
+    <div>
+      <div className="container">
+        <div className="login-grid">
+          <div className="login-text">
+            <h2>Login</h2>
+          </div>
+          <div className="login-text">
+            Are you a new member? <span><Link to="/signup" style={{ color: '#2190FF' }}> Sign Up Here</Link></span>
+          </div>
+          <br />
+          <div className="login-form">
+            <form onSubmit={login}>
+              <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" name="email" id="email" className="form-control" placeholder="Enter your email" aria-describedby="helpId" />
+                    </div>
+                    <div className="form-group">
+               <label htmlFor="password">Password</label>
+               <input
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+                 type="password"
+                 name="password"
+                 id="password"
+                 className="form-control"
+                 placeholder="Enter your password"
+                 aria-describedby="helpId"
+               />
+             </div>
+              <div className="btn-group">
+                <button type="submit" className="btn btn-primary mb-2 mr-1 waves-effect waves-light">Login</button>
+              </div>
+            </form>
+          </div>
         </div>
-    );
-};
+      </div>
+    </div>
+  )
+}
 
 export default Login;
