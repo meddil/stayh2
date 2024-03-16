@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Sign_Up.css';
+import { API_URL } from '../../config';
 
 const Sign_Up = () => {
     const [formData, setFormData] = useState({
@@ -10,13 +12,15 @@ const Sign_Up = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [showerr, setShowerr] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = {};
 
@@ -43,8 +47,34 @@ const Sign_Up = () => {
         }
 
         if (Object.keys(validationErrors).length === 0) {
-            // Form is valid, submit data or perform further actions
-            console.log('Form submitted:', formData);
+            // API Call
+            const response = await fetch(`${API_URL}/api/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const json = await response.json();
+
+            if (json.authtoken) {
+                sessionStorage.setItem("auth-token", json.authtoken);
+                sessionStorage.setItem("name", formData.name);
+                sessionStorage.setItem("phone", formData.phone);
+                sessionStorage.setItem("email", formData.email);
+                // Redirect to home page
+                navigate("/");
+                window.location.reload();
+            } else {
+                if (json.errors) {
+                    for (const error of json.errors) {
+                        setShowerr(error.msg);
+                    }
+                } else {
+                    setShowerr(json.error);
+                }
+            }
         } else {
             // Set validation errors
             setErrors(validationErrors);
@@ -58,7 +88,7 @@ const Sign_Up = () => {
                     <h1>Sign Up</h1>
                 </div>
                 <div className="signup-text1" style={{ textAlign: 'left' }}>
-                    Already a member? <span><a href="../Login/Login.html" style={{ color: '#2190FF' }}> Login</a></span>
+                    Already a member? <span><Link to="/login" style={{ color: '#2190FF' }}> Login</Link></span>
                 </div>
                 <div className="signup-form">
                     <form onSubmit={handleSubmit}>
@@ -126,6 +156,7 @@ const Sign_Up = () => {
                             <button type="reset" className="btn btn-danger mb-2 waves-effect waves-light">Reset</button>
                         </div>
                     </form>
+                    {showerr && <div className="err" style={{ color: 'red' }}>{showerr}</div>}
                 </div>
             </div>
         </div>
