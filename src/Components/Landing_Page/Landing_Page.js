@@ -1,7 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./LandingPage.css";
 
-const LandingPage = () => {
+const Landing_Page = () => {
   return (
     <section className="hero-section">
       <div>
@@ -34,4 +35,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default Landing_Page;

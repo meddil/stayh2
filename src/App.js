@@ -1,7 +1,8 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import LandingPage from './Components/Landing_Page/LandingPage';
+import Layout from './Components/Landing_Page/Landing_Page';
 import Navbar from './Components/Navbar/Navbar';
 import SignUp from './Components/Sign_Up/Sign_Up';
 import Login from './Components/Login/Login';
@@ -11,9 +12,10 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/LandingPage" element={<LandingPage />} />
+          <Route path="/" element={<Layout />} />
           <Route path="/Sign_Up" element={<SignUp />} />
-          <Route path="/Login" element={<Login />} />
+          <Route path="/Login" Component={Login} />
+
         </Routes>
       </BrowserRouter>
     </div>
