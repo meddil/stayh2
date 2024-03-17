@@ -57,7 +57,7 @@ const DoctorCard = ({ name, speciality, experience, ratings, profilePic }) => {
           trigger={
             <button className={`book-appointment-btn ${appointments.length > 0 ? 'cancel-appointment' : ''}`}>
               {appointments.length > 0 ? (
-                <div>Cancel Appointment</div>
+                <div>Conancel Appointment</div>
               ) : (
                 <div>Book Appointment</div>
               )}
