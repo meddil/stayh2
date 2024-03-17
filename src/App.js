@@ -10,12 +10,15 @@ import InstantConsultation from './Components/InstantConsultation/InstantConsult
 import FindDoctorSearch from './Components/FindDoctorSearch/FindDoctorSearch'
 import DoctorCard from './Components/DoctorCard/DoctorCard'
 import AppointmentForm from './Components/AppointmentForm/AppointmentForm'
+import Notification from './Components/Notification/Notification';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
+
         <Navbar />
+        <Notification>
         <Routes>
           <Route path="/" element={<Layout />} />
           <Route path="/Sign_Up" element={<SignUp />} />
@@ -24,10 +27,13 @@ function App() {
           <Route path="/FindDoctorSearch" Component={FindDoctorSearch} /> 
           <Route path="/DoctorCard" Component={DoctorCard} />         
           <Route path='/AppointmentForm' Component={AppointmentForm} />
+        
 
         </Routes>
+        </Notification>
       </BrowserRouter>
     </div>
+    
   );
 }
 
